@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Love Engine</title>
+
+<style>
+*{box-sizing:border-box;font-family:monospace}
+body{
+margin:0;
+height:100vh;
+background:#fff0f6;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+/* floating hearts */
+.bg-heart{
+position:absolute;
+font-size:26px;
+opacity:.15;
+animation:float 10s linear infinite;
+}
+@keyframes float{
+from{transform:translateY(110vh)}
+to{transform:translateY(-120vh)}
+}
+
+.pixel{
+background:#ffd1e6;
+width:360px;
+max-width:92vw;
+padding:22px;
+box-shadow:
+0 0 0 4px #ff9ecb,
+0 0 0 8px #ff6fae,
+0 0 0 12px #ff9ecb;
+text-align:center;
+position:relative;
+z-index:2;
+}
+
+h1{font-size:18px;color:#ff3d8b}
+p{font-size:14px}
+
+button{
+margin:6px;
+padding:8px 16px;
+background:#ffe3f1;
+border:none;
+cursor:pointer;
+box-shadow:
+0 0 0 2px #ff6fae,
+0 0 0 4px #ff9ecb;
+}
+
+input{
+padding:8px;
+border:none;
+text-align:center;
+background:white;
+box-shadow:0 0 0 2px #ff6fae;
+}
+
+.page{display:none}
+.show{display:block}
+
+canvas{position:fixed;top:0;left:0;pointer-events:none}
+
+.chat{
+background:white;
+padding:10px;
+text-align:left;
+height:160px;
+overflow:auto;
+box-shadow:0 0 0 3px #ff6fae inset;
+}
+.bubble{
+background:#ffe3f1;
+margin:6px;
+padding:6px;
+display:inline-block;
+}
+
+/* bunga */
+.flower{
+position:absolute;
+bottom:-40px;
+font-size:28px;
+animation:grow 3s forwards;
+}
+@keyframes grow{
+to{bottom:60px}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<script>
+for(let i=0;i<18;i++){
+const h=document.createElement("div");
+h.className="bg-heart";
+h.innerText="💗";
+h.style.left=Math.random()*100+"vw";
+h.style.animationDuration=8+Math.random()*6+"s";
+document.body.appendChild(h);
+}
+</script>
+
+<div class="pixel">
+
+<div class="page show" id="p1">
+<h1>Password dulu 😈</h1>
+<input id="pw">
+<br><br>
+<button onclick="checkPw()">Masuk</button>
+</div>
+
+<div class="page" id="p2">
+<p>aku mau ngomong sesuatu</p>
+<button onclick="show(3)">lanjut</button>
+</div>
+
+<div class="page" id="p3">
+<h1>deg deg an ga?</h1>
+<button onclick="show(4)">lanjut</button>
+</div>
+
+<div class="page" id="p4">
+<h1>Kamu sayang aku?</h1>
+<button onclick="start()">IYA 💗</button>
+<button id="noBtn">ENGGAK</button>
+</div>
+
+<div class="page" id="p5">
+<p>Loading perasaan...</p>
+</div>
+
+<div class="page" id="p6">
+<h1>CIYEEE 😆</h1>
+<button onclick="show(7)">lanjut</button>
+</div>
+
+<div class="page" id="p7">
+<p id="type"></p>
+<button onclick="show(8)">lanjut</button>
+</div>
+
+<div class="page" id="p8">
+<h1>jadi pacar aku ya?</h1>
+<button onclick="yes()">MAU</button>
+<button id="noBtn2">G</button>
+</div>
+
+<div class="page" id="p9">
+<h1>🎉 JADIAN 🎉</h1>
+<button onclick="show(10)">lanjut</button>
+</div>
+
+<div class="page" id="p10">
+<div class="chat" id="chat"></div>
+<br>
+<button onclick="show(11)">lanjut 😈</button>
+</div>
+
+<div class="page" id="p11">
+<h1>MODE GOMBAL</h1>
+<p id="gombal"></p>
+<br>
+<button onclick="nextGombal()">lagi</button>
+<button onclick="show(12)">akhir</button>
+</div>
+
+<div class="page" id="p12">
+<h1>🌸 taman buat kamu</h1>
+<p>bunga tumbuh karena kamu</p>
+<br>
+<button onclick="startGarden()">tumbuhkan</button>
+<button onclick="goStart()">⬅ awal</button>
+</div>
+
+</div>
+
+<script>
+const password="arin";
+
+/* click sound */
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+function clickSound(){
+const o=audioCtx.createOscillator();
+const g=audioCtx.createGain();
+o.frequency.value=700;
+g.gain.value=0.05;
+o.connect(g);g.connect(audioCtx.destination);
+o.start();o.stop(audioCtx.currentTime+0.05);
+}
+document.addEventListener("click",clickSound);
+
+function show(n){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("show"));
+document.getElementById("p"+n).classList.add("show");
+if(n===7)typing();
+if(n===10)chatStart();
+if(n===11){g=0;nextGombal();}
+}
+
+function checkPw(){
+if(pw.value===password)show(2);
+else alert("password salah");
+}
+
+function goStart(){
+show(1);
+pw.value="";
+}
+
+function move(btn){
+btn.style.position="absolute";
+btn.style.left=Math.random()*200+"px";
+btn.style.top=Math.random()*120+"px";
+}
+noBtn.onmouseover=()=>move(noBtn);
+noBtn2.onmouseover=()=>move(noBtn2);
+
+function start(){
+show(5);
+setTimeout(()=>show(6),2000);
+}
+
+/* typing */
+const text="sebenernya aku suka kamu dari lama banget.";
+let ti=0;
+const typeEl=document.getElementById("type");
+function typing(){
+typeEl.innerHTML="";
+ti=0;
+function t(){
+if(ti<text.length){
+typeEl.innerHTML+=text[ti];
+ti++;
+setTimeout(t,40);
+}
+}
+t();
+}
+
+function yes(){
+show(9);
+confettiStart();
+}
+
+/* chat */
+function chatStart(){
+let msgs=["halo pacar 😈","akhirnya jadian","jangan kabur ya","hehe"];
+let i=0;
+function send(){
+if(i<msgs.length){
+let b=document.createElement("div");
+b.className="bubble";
+b.innerText=msgs[i];
+chat.appendChild(b);
+chat.scrollTop=999;
+i++;
+setTimeout(send,700);
+}
+}
+send();
+}
+
+/* gombal */
+const gombalList=[
+"kamu wifi ya? nyambung terus",
+"kamu pixel? kecil tapi penting",
+"kamu loading? aku nungguin",
+"kamu bug? bikin aku error",
+"kamu save file? aku ga mau kehilangan"
+];
+let g=0;
+const gombalEl=document.getElementById("gombal");
+function nextGombal(){
+gombalEl.innerText=gombalList[g%gombalList.length];
+g++;
+}
+
+/* garden bunga */
+function startGarden(){
+for(let i=0;i<25;i++){
+setTimeout(()=>{
+let f=document.createElement("div");
+f.className="flower";
+f.innerText=["🌷","🌸","🌹","🌼"][Math.floor(Math.random()*4)];
+f.style.left=Math.random()*window.innerWidth+"px";
+document.body.appendChild(f);
+},i*200);
+}
+}
+
+/* confetti */
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+let pieces=[];
+function confettiStart(){
+for(let i=0;i<120;i++){
+pieces.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:5});
+}
+animate();
+}
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="pink";
+pieces.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+p.y+=2;
+});
+requestAnimationFrame(animate);
+}
+</script>
+
+</body>
+</html>
